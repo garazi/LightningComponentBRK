@@ -151,7 +151,8 @@ The following code snippets are for use with the Lightning Components BRK.
           },
           {
             label: "Status",
-            fieldName: "Status__c"
+            fieldName: "Status__c",
+            sortable: "true"
           },
           {
             type: 'action',
@@ -172,7 +173,7 @@ The following code snippets are for use with the Lightning Components BRK.
         })
         $A.enqueueAction(action);
       },
-      handleRowAction: function (cmp, event, helper) {
+    handleRowAction: function (cmp, event, helper) {
           var action = event.getParam('action');
           var row = event.getParam('row');
           switch (action.name) {
