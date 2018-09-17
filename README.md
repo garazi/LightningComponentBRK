@@ -2,10 +2,6 @@
 
 The following code snippets are for use with the Lightning Components BRK.
 
-### Install Package
-
-[https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6A000001xAkP](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6A000001xAkP)
-
 ### Step 1
 
   ```html
