@@ -4,7 +4,7 @@ The following code snippets are for use with the Lightning Components BRK.
 
 ### Step 1
 
-  ```html
+  ```xml
   <aura:attribute name="recordId" type="Id" />
   <aura:attribute name="broker" type="Broker__c" />
   <force:recordData aura:id="propertyService" 
@@ -18,7 +18,7 @@ The following code snippets are for use with the Lightning Components BRK.
   
 ### Step 2
 
-  ```html
+  ```xml
   <aura:component controller="PropertiesByBroker" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
       <aura:attribute name="recordId" type="Id" />
       <aura:attribute name="brokerRecord" type="Broker__c" />
