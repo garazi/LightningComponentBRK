@@ -94,7 +94,7 @@ The following code snippets are for use with the Lightning Components BRK.
   
 ### Step 4
 
-  ```html
+  ```xml
   <aura:component controller="PropertiesByBroker" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
       <aura:attribute name="recordId" type="Id" />
       <aura:attribute name="brokerRecord" type="Broker__c" />
