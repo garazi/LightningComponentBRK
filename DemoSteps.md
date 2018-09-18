@@ -5,12 +5,9 @@
 
 ## **Change Log**
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-|**Date** |**Author** |**Email** |**Comments** |
-  | 8/20/2018	| Greg Rewis	| [grewis@salesforce.com](mailto:grewis@salesforce.com)| Updated for Winter '19 
+| Date | Author | Email  | Comments |
+| ------------- | ------------- | ------------- | ------------- |
+| 8/20/2018	| Greg Rewis	| [grewis@salesforce.com](mailto:grewis@salesforce.com)| Updated for Winter '19 
 on 9/18/2018	|
 |---	|---	|---	|---	|
 |3/6/2018	|Greg Rewis	|[grewis@salesforce.com](mailto:grewis@salesforce.com)	|Updated for Spring '18	|
