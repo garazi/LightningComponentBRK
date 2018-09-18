@@ -9,7 +9,7 @@
 | ------------- | ------------- | ------------- | ------------- |
 | 9/17/2018	| Greg Rewis	| [grewis@salesforce.com](mailto:grewis@salesforce.com)| Updated for Winter '19 	|
 |3/6/2018	|Greg Rewis	|[grewis@salesforce.com](mailto:grewis@salesforce.com)	|Updated for Spring '18	|
-|11/3/2017	|Greg Rewis	|[grewis@salesforce.com](mailto:grewis@salesforce.com)	|Notes	|
+|11/3/2017	|Greg Rewis	|[grewis@salesforce.com](mailto:grewis@salesforce.com)	|First Version	|
 
 ## Objectives
 
