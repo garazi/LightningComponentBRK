@@ -25,10 +25,9 @@ For this demo, you can either use the Developer Console, or VS Code with SFDX. A
 * Using the CLI, navigate into the folder you created and execute the following command:
     * `git clone https://github.com/garazi/Dreamhouse_BRK.git `
 * Using the CLI, navigate into the newly created folder “Dreamhouse_BRK”.
-* Log into the devhub with the following:
+* Log into your devhub with the following:
     * `sfdx force:auth:web:login -a dfDevHub`
-    * Username: [demo@devhub2019.com](mailto:demo@devhub2019.com)
-    * Password: sfdc1234
+
         * Close the browser window once you have authenticated
 * Run the following command, where YOUR_ORG_NAME is whatever you want:
     * `sfdx force:org:create -f config/project-scratch-def.json -s -a YOUR_ORG_NAME -d 30 -w 10`
