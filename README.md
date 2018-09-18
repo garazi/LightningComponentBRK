@@ -5,225 +5,155 @@ The following code snippets are for use with the Lightning Components BRK.
 ### Step 1
 
   ```xml
-  <aura:attribute name="recordId" type="Id" />
-  <aura:attribute name="broker" type="Broker__c" />
-  <force:recordData aura:id="propertyService" 
-                    recordId="{!v.recordId}" 
-                    targetFields="{!v.broker}"
-                    layoutType="FULL" />
-  <lightning:card iconName="custom:custom85" title="{! 'Properties for ' + v.broker.Name}">
-
-  </lightning:card>
+	<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+	    <aura:attribute name="recordId" type="Id" />
+	    <aura:attribute name="similarProperties" type="Object[]" />
+	    <aura:attribute name="property" type="Property__c" />
+	    <aura:attribute name="searchCriteria" type="String" default="Price" />
+	    <aura:attribute name="priceRange" type="String" default="100000" />
+	    
+	    <force:recordData 
+	        aura:id="propertyService" 
+	        recordId="{!v.recordId}" 
+	        targetFields="{!v.property}" 
+	        layoutType="FULL" />
+	
+		<lightning:card iconName="custom:custom85" title="{! 'Similar Properties by ' + v.searchCriteria}" class="slds-is-relative">
+        <div class="slds-p-horizontal_medium">
+            CONTENT GOES HERE
+        </div>
+		</lightning:card>
+	
+	</aura:component>
   ```
   
 ### Step 2
 
   ```xml
-  <aura:component controller="PropertiesByBroker" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
-      <aura:attribute name="recordId" type="Id" />
-      <aura:attribute name="brokerRecord" type="Broker__c" />
-      <aura:attribute name="propertyRecords" type="Object[]"  />
-      <aura:attribute name="columns" type="List" />
-
-      <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-
-      <force:recordData aura:id="brokerLookup" 
-                        recordId="{!v.recordId}"
-                        targetFields="{!v.brokerRecord}" 
-                        fields="Picture__c" 
-                        layoutType="FULL"  />
-
-      <lightning:card iconName="custom:custom85" title="{! 'Properties for ' + v.brokerRecord.Name }">
-          <lightning:datatable aura:id="datatable" 
-                               data="{!v.propertyRecords}" 
-                               columns="{!v.columns}" 
-                               keyField="id" 
-                               resizeColumnDisabled="true"
-                               onrowselection="{!c.doSelect}"
-                               onrowaction="{! c.handleRowAction }"
-                               onsort="{!c.updateColumnSorting}" />
-              </lightning:card>
-  </aura:component>
+	<aura:component controller="MyPropertyController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+		<aura:attribute name="recordId" type="Id" />
+		<aura:attribute name="similarProperties" type="Object[]" />
+	    <aura:attribute name="property" type="Property__c" />
+	    <aura:attribute name="searchCriteria" type="String" default="Price" />
+	    <aura:attribute name="priceRange" type="String" default="100000" />
+	
+	    <force:recordData 
+	            aura:id="propertyService" 
+	            recordId="{!v.recordId}" 
+	            targetFields="{!v.property}" 
+	            layoutType="FULL" 
+	            recordUpdated="{! c.doSearch}" />
+	
+		<lightning:card iconName="custom:custom85" title="{! 'Similar Properties by ' + v.searchCriteria}" class="slds-is-relative">
+	        <div class="slds-p-horizontal_medium">
+	            CONTENT GOES HERE
+	        </div>
+		</lightning:card>
+	</aura:component>
   ```
   
 ### Step 3
 
   ```js
-  ({
-    doInit: function(component, event, helper) {
-      var rowLevelActions = [
-        { label: 'Edit Details', name: 'edit_details' },
-        { label: 'Delete', name: 'delete' }
-          ];
-      component.set("v.columns", [
-        {
-          label: "Property",
-          fieldName: "url", //there is no url field, we are using it for the purpose of navigation
-          type: "url",
-          sortable: "true", // we won't actually finish this in the demo
-          typeAttributes: { label: { 
-              fieldName: "Name" // this is what will be displayed in the column
-              } 
-          }
-        },
-        {
-          label: "Status",
-          fieldName: "Status__c"
-        },
-        {
-          type: 'action',
-          typeAttributes: { rowActions: rowLevelActions }
-        }
-          ]);
-      var action = component.get("c.getPropertiesByBroker");
-      action.setParams({
-        BrokerId: component.get("v.recordId")
-      });
-      action.setCallback(this, function(response) {
-        var propertyList = response.getReturnValue();
-        propertyList.forEach(function(element){
-                  // url is a temporary field that we will use for the purpose of navigation
-          element.url = "/one/one.app#/sObject/" + element.Id;
+({
+    doSearch : function(component, event, helper) {
+        var action = component.get("c.getSimilarProperties");
+        action.setParams({
+            recordId: component.get("v.recordId"),
+            beds: component.get("v.property.fBeds__c"),
+            price: component.get("v.property.Price__c"),
+            searchCriteria: component.get("v.searchCriteria"),
+            priceRange: parseInt(component.get("v.priceRange"), 10)
         });
-        component.set("v.propertyRecords", propertyList);
-      })
-      $A.enqueueAction(action);
+        action.setCallback(this, function(response){
+            var similarProperties = response.getReturnValue();
+            component.set("v.similarProperties", similarProperties);
+        });
+        $A.enqueueAction(action);
     }
-  })
+})
   ```
   
 ### Step 4
 
-  ```xml
-  <aura:component controller="PropertiesByBroker" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
-      <aura:attribute name="recordId" type="Id" />
-      <aura:attribute name="brokerRecord" type="Broker__c" />
-      <aura:attribute name="propertyRecords" type="Object[]"  />
-      <aura:attribute name="columns" type="List" />
-      <aura:attribute name="selectedRow" type="String" />
-      <aura:attribute name="sortedBy" type="String" />
-      <aura:attribute name="sortedDirection" type="String" />
-      <aura:attribute name="showDialog" type="String" />
-
-      <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-      <aura:handler event="c:recordUpdated" action="{!c.doInit}" /> 
-
-      <force:recordData aura:id="brokerLookup" 
-                        recordId="{!v.recordId}"
-                        targetFields="{!v.brokerRecord}" 
-                        fields="Picture__c" 
-                        layoutType="FULL"  />
-
-      <lightning:card iconName="custom:custom85" title="{! 'Properties for ' + v.brokerRecord.Name }">
-            <lightning:datatable aura:id="datatable" 
-                                 data="{!v.propertyRecords}" 
-                                 columns="{!v.columns}" 
-                                 keyField="id" 
-                                 resizeColumnDisabled="true"
-                                 onrowselection="{!c.doSelect}"
-                                 onrowaction="{! c.handleRowAction }"
-                                 onsort="{!c.updateColumnSorting}" />
-            <c:PropertiesByBrokerEdit recordId="{!v.selectedRow}" showDialog="{!v.showDialog}" />
-      </lightning:card>
-  </aura:component>
-  ```
+	```xml
+	<ul class="slds-grid slds-wrap slds-has-dividers_top-space">
+	    <aura:iteration items="{!v.similarProperties}" var="item">
+	        <li class="slds-item slds-size_1-of-1">
+	            {! item.Name}
+	        </li>
+	    </aura:iteration>
+	</ul>
+	```
  
 ### Step 5
 
-  ```js
-  ({
-      doInit: function(component, event, helper) {
-        var rowLevelActions = [
-          { label: 'Edit Details', name: 'edit_details' },
-          { label: 'Delete', name: 'delete' }
-            ];
-        component.set("v.columns", [
-          {
-            label: "Property",
-            fieldName: "url", //there is no url field on the record, we are using this for the purpose of navigation
-            type: "url",
-            sortable: "true",
-            typeAttributes: { label: { fieldName: "Name" } }
-          },
-          {
-            label: "Status",
-            fieldName: "Status__c",
-            sortable: "true"
-          },
-          {
-            type: 'action',
-            typeAttributes: { rowActions: rowLevelActions }
-          }
-            ]);
-        var action = component.get("c.getPropertiesByBroker");
-        action.setParams({
-          BrokerId: component.get("v.recordId")
-        });
-        action.setCallback(this, function(response) {
-          var propertyList = response.getReturnValue();
-          propertyList.forEach(function(element){
-            // url is a temporary field that we will use for the purpose of navigation
-            element.url = "/one/one.app#/sObject/" + element.Id;
-          });
-          component.set("v.propertyRecords", propertyList);
-        })
-        $A.enqueueAction(action);
-      },
-    handleRowAction: function (cmp, event, helper) {
-          var action = event.getParam('action');
-          var row = event.getParam('row');
-          switch (action.name) {
-              case 'edit_details':
-                  cmp.set("v.showDialog", "true");
-                  cmp.set("v.selectedRow", row.Id);
-                  break;
-              case 'delete':
-                  var rows = cmp.get('v.propertyRecords');
-                  var rowIndex = rows.indexOf(row);
-                  rows.splice(rowIndex, 1);
-                  cmp.set('v.propertyRecords', rows);
-                  break;
-          }
-      },
-    doSelect: function(component, event, helper) {
-      var selectedRows = event.getParam('selectedRows');
-      for (var i = 0; i < selectedRows.length; i++) {
-        alert("You selected: " + selectedRows[i].Name);
-      }
-    },
-    updateColumnSorting: function(component, event, helper) {
-      var fieldName = event.getParam('fieldName');
-      var sortDirection = event.getParam('sortDirection');
-          if (fieldName == "url") {
-              fieldName = "Name";
-          }
-      component.set("v.sortedBy", fieldName);
-      component.set("v.sortedDirection", sortDirection);
-      helper.sortData(component, fieldName, sortDirection);
-    }
-  })  
+  ```xml
+	<aura:component controller="MyPropertyController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+		<aura:attribute name="recordId" type="Id" />
+		<aura:attribute name="similarProperties" type="Object[]" />
+	    <aura:attribute name="property" type="Property__c" />
+	    <aura:attribute name="searchCriteria" type="String" default="Price" />
+	    <aura:attribute name="priceRange" type="String" default="100000" />
+	    <aura:attribute name="fields" type="String[]" default="Beds__c,Baths__c,Price__c,Status__c,Broker__c"/>
+	
+	    <force:recordData 
+	            aura:id="propertyService" 
+	            recordId="{!v.recordId}" 
+	            targetFields="{!v.property}" 
+	            layoutType="FULL" 
+	            recordUpdated="{! c.doSearch}" />
+	
+		<lightning:card iconName="custom:custom85" title="{! 'Similar Properties by ' + v.searchCriteria}" class="slds-is-relative">
+	        <div class="slds-p-horizontal_medium">
+	                <ul class="slds-grid slds-wrap slds-has-dividers_top-space">
+	                        <aura:iteration items="{!v.similarProperties}" var="item">
+	                            <li class="slds-item slds-size_1-of-1">
+	                                <div class="slds-media slds-p-vertical_medium">
+	                                    <div class="slds-media__figure">
+	                                        <img src="{!item.Thumbnail__c}" class="slds-avatar_large slds-avatar_circle" alt="{!v.targetFields.Title_c}" />
+	                                    </div>
+	                                    <div class="slds-media__body">
+                                            <a onclick="{!c.navToRecord}" data-value="{! item.Id}">
+                                                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">{! item.Name}</h3>
+                                            </a>
+	                                    	    <lightning:recordForm recordId="{! item.Id}" objectApiName="Property__c" fields="{!v.fields}" columns="2" mode="View" />
+	                                    </div>
+	                                </div>
+	                            </li>
+	                        </aura:iteration>
+	                    </ul>
+	        </div>
+		</lightning:card>
+	</aura:component>
   ```
 
 ### Step 6
 
   ```js
-  ({
-      sortData: function (cmp, fieldName, sortDirection) {
-          var data = cmp.get("v.propertyRecords");
-          var reverse = sortDirection !== 'asc';
-          //sorts the rows based on the column header that's clicked
-          data.sort(this.sortBy(fieldName, reverse))
-          cmp.set("v.propertyRecords", data);
-      },
-      sortBy: function (field, reverse, primer) {
-          var key = primer ?
-              function(x) {return primer(x[field])} :
-              function(x) {return x[field]};
-          //checks if the two rows should switch places
-          reverse = !reverse ? 1 : -1;
-          return function (a, b) {
-              return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
-          }
-      }
-  })  
+	({
+	    doSearch : function(component, event, helper) {
+	        var action = component.get("c.getSimilarProperties");
+	        action.setParams({
+	            recordId: component.get("v.recordId"),
+	            beds: component.get("v.property.Beds__c"),
+	            price: component.get("v.property.Price__c"),
+	            searchCriteria: component.get("v.searchCriteria"),
+	            priceRange: parseInt(component.get("v.priceRange"), 10)
+	        });
+	        action.setCallback(this, function(response){
+	            var similarProperties = response.getReturnValue();
+	            component.set("v.similarProperties", similarProperties);
+	        });
+	        $A.enqueueAction(action);
+	    },
+	    navToRecord : function (component, event, helper) {
+	        var remoteId = event.currentTarget;
+	        var navEvt = $A.get("e.force:navigateToSObject");
+	        navEvt.setParams({
+	            "recordId": remoteId.dataset.value
+	        });
+	        navEvt.fire();
+	    }
+	})
   ```
