@@ -1,6 +1,7 @@
 # Lightning Component BRK
 
-If you need another scratch org, click this button:  [![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://sfdx-deployer-app.herokuapp.com/launch?template=https://github.com/garazi/Dreamhouse_BRK)
+If you need another scratch org, click this button:
+[![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://sfdx-deployer-app.herokuapp.com/launch?template=https://github.com/garazi/Dreamhouse_BRK)
 
 The following code snippets are for use with the Lightning Components BRK.
 
@@ -159,3 +160,6 @@ The following code snippets are for use with the Lightning Components BRK.
 	    }
 	})
   ```
+
+### In case of emergency...
+There is a finished version (different markup, but same functionality) called SimilarProperties in the org.
